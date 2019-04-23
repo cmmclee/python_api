@@ -5,13 +5,12 @@ from keras.models import load_model
 import numpy as np
 from flask import Flask, request
 import urllib
-import time
 
 app = Flask(__name__)
 
+# 分类器和模型初始化
 detection_model_path = 'haarcascade_files/haarcascade_frontalface_default.xml'
 emotion_model_path = 'models/_mini_XCEPTION.102-0.66.hdf5'
-# 分类器和模型初始化
 face_detection = cv2.CascadeClassifier(detection_model_path)
 emotion_classifier = load_model(emotion_model_path, compile=False)
 
@@ -41,7 +40,7 @@ detect(init_pic)
 
 @app.route('/')
 def hello():
-    return "hello"
+    return "hello world"
 
 # URL到图片:下载图片--> Numpy array --> opencv格式
 def url_to_image(url):
@@ -54,25 +53,17 @@ def url_to_image(url):
 def predict():
     # userid = request.args.get('userid')
     pickey = request.args.get('pickey')
-    starttime = time.time()
-
     ossUrl = 'http://longbei-dev-media-out.oss-cn-beijing.aliyuncs.com/'
-    imgUrl = ossUrl + pickey
+    imgUrl = ossUrl + str(pickey)
     image = url_to_image(imgUrl)
 
-    loadtime = time.time()
-    print("load pic take seconds: {:f}".format(loadtime - starttime))
     # 尝试检测不同的图片 # img = "smile{}.jpg".format()
     # 尝试检测不同的情景(没有人脸的，多张人脸的)
     # 性能测试、并发测试
     # 部署到测试环境
     # 输入格式的兼容与优化
     # 与face++ api 的比较
-    label = detect(image)
-
-    endtime = time.time()
-    print("all steps take seconds: {:f}".format(endtime - starttime))
-    return label
+    return detect(image)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True, use_reloader=False)
