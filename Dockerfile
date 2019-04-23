@@ -28,9 +28,17 @@ RUN echo "LANG=\"en_US.UTF-8\"" > /etc/default/locale && \
     echo "LC_ALL=\"en_US.UTF-8\"" >> /etc/default/locale
 
 # Install necessary library
-RUN apt-get -y install apt-utils python python-dev python-pip \
+RUN apt-get -y install apt-utils \
     lib32z1 libglib2.0-0 libsm6 libxrender1 \
     libxext6 libice6 libxt6 libfontconfig1 libcups2
+
+# Install python3
+RUN  apt-get install -y python3
+
+# Install pip
+RUN apt-get install -y wget vim
+RUN wget -O /tmp/get-pip.py https://bootstrap.pypa.io/get-pip.py
+RUN python3 /tmp/get-pip.py
 
 # Modify pip mirror
 RUN mkdir -p /root/.pip
@@ -44,5 +52,5 @@ RUN pip install --upgrade pip
 RUN pip install flask numpy scipy opencv-python tensorflow keras
 
 # Make startup run file
-CMD python app.py
+CMD python3 app.py
 
