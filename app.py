@@ -40,7 +40,7 @@ detect(init_pic)
 
 @app.route('/')
 def hello():
-    return "hello world"
+    return "hello lcc"
 
 # URL到图片:下载图片--> Numpy array --> opencv格式
 def url_to_image(url):
