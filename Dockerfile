@@ -29,7 +29,7 @@ RUN echo "LANG=\"en_US.UTF-8\"" > /etc/default/locale && \
 
 # Install necessary library
 RUN apt-get -y install apt-utils python python-dev python-pip \
-    lib32z1 libglib2.0-0:i386 libsm6 libxrender1 \
+    lib32z1 libglib2.0-0 libsm6 libxrender1 \
     libxext6 libice6 libxt6 libfontconfig1 libcups2
 
 # Modify pip mirror
@@ -41,8 +41,7 @@ RUN echo "[global]" > /root/.pip/pip.conf && \
 
 # Install necessary python-library
 RUN pip install --upgrade pip
-RUN pip install keras
-RUN pip install numpy scipy opencv-python tensorflow keras
+RUN pip install flask numpy scipy opencv-python tensorflow keras
 
 # Make startup run file
 CMD python app.py
