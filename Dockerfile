@@ -40,7 +40,7 @@ RUN echo "[global]" > /root/.pip/pip.conf && \
 # Install necessary python-library
 RUN pip install --upgrade pip
 RUN pip install keras
-#RUN pip install numpy scipy opencv-python tensorflow keras
+RUN pip install numpy scipy opencv-python tensorflow keras
 
 # Make startup run file
 CMD python app.py
