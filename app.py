@@ -5,6 +5,7 @@ from keras.models import load_model
 import numpy as np
 from flask import Flask, request, jsonify
 import urllib.request
+import time
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -45,7 +46,7 @@ detect(init_pic)
 
 @app.route('/')
 def hello():
-    return "hello python3"
+    return time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
 
 
 # URL到图片:下载图片--> Numpy array --> opencv格式
