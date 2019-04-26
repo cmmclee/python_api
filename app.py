@@ -18,12 +18,12 @@ emotion_classifier = load_model(emotion_model_path, compile=False)
 
 
 def detect(image):
-    massage = ''
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    faces = face_detection.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, flags=cv2.CASCADE_SCALE_IMAGE)
+    faces = face_detection.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30),
+                                            flags=cv2.CASCADE_SCALE_IMAGE)
     if len(faces) > 0:
         if len(faces) > 1:
-            return {'code': -1, 'massage': '检测到' + str(len(faces)) + '张人脸,\n请确保图片中只出现一张人脸'}
+            return {'code': -1, 'data': len(faces)}
         (fX, fY, fW, fH) = faces[0]
         roi = gray[fY:fY + fH, fX:fX + fW]
         roi = cv2.resize(roi, (64, 64))
@@ -33,10 +33,15 @@ def detect(image):
 
         preds = emotion_classifier.predict(roi)[0]
         smile = preds[3] * 100
-        print("smile value: {:.2f}".format(smile))
-        return {'code': 0, 'data': "{:.2f}".format(smile), 'massage': massage}
+        # print("smile value: {:.2f}".format(smile))
+        '''错误码：
+            -1: 多张人脸
+            -2: 未检测到人脸
+            -3: 无效的图片        
+        '''
+        return {'code': 0, 'data': "{:.2f}".format(smile)}
     else:
-        return {'code': -1, 'massage': '未检测到人脸，请面对镜头'}
+        return {'code': -2}
 
 
 # 注意：模型初始化后，一定要立即执行一次model.predict()，否则会报错
@@ -46,7 +51,7 @@ detect(init_pic)
 
 @app.route('/')
 def hello():
-    return time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+    return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
 
 
 # URL到图片:下载图片--> Numpy array --> opencv格式
@@ -63,7 +68,7 @@ def predict():
     try:
         image = url_to_image(str(pickey))
     except:
-        return jsonify({'code': -1, 'massage': '图片上传失败'})
+        return jsonify({'code': -3})
     return jsonify(detect(image))
 
 
